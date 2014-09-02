@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="niceutility.hoa.owedebtmanager.MainActivity" >
+
+    <item 
+        android:id="@+id/action_create_new_debt"
+        android:title="@string/action_create_new_debt"
+        android:icon="@drawable/ic_ab_compose"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never"/>
+    
+
+</menu>
