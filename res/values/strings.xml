@@ -27,7 +27,7 @@
 	<string name="debt_field_name_titile">Debt name</string>
 	<string name="amount_field_name_title">Amount owed</string>
 	<string name="contact_field_name_title">Contact</string>
-	<string name="select_contact_hint">select a contact</string>
+	<string name="select_contact_hint">Select a contact</string>
 	<string name="owe_date_field_name_title">Owe date</string>
 	<string name="expired_date_field_name_title">Expired date</string>
 	<string name="select_date_hint">select a date</string>
@@ -36,6 +36,10 @@
 	<string name="interest_field_name_title">Interest</string>
 	<string name="reminder_field_titile">Reminder</string>
 	<string name="reminder_hint">What makes you remind of this debt?</string>
+	<string name="or">Or</string>
 	
 	<string name="action_done">Done</string>
+	
+	<string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+	<string name="action_search">Search</string>
 </resources>
