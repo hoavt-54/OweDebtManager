@@ -6,7 +6,7 @@
     <item 
         android:id="@+id/action_create_new_debt"
         android:title="@string/action_create_new_debt"
-        android:icon="@drawable/ic_ab_compose"
+        android:icon="@drawable/ic_action_new_event"
         app:showAsAction="always"/>
     <item
         android:id="@+id/action_settings"

@@ -3,7 +3,8 @@
 package niceutility.hoa.owedebtmanager.data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+
+import niceutility.hoa.owedebtmanager.android.DebtType;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -18,11 +19,12 @@ typeOfInterest*/
 
 @DatabaseTable
 public class Debt {
+	public static final String PERSON_NAME_FIELD = "person_id";
 	@DatabaseField(generatedId=true)
 	private int debtId;
 	
 	@DatabaseField
-	private boolean isMyDebt;
+	private DebtType type;
 	
 	@DatabaseField
 	private String name;
@@ -37,29 +39,53 @@ public class Debt {
 	private double interest;
 	
 	@DatabaseField
-	private TypeOfInterest interestType;
+	private InterestType interestType;
 	
 	//we may change these two attributes to long, instead of Date
 	@DatabaseField
-	private Date oweDate;
+	private long oweDate;
 	
 	@DatabaseField
-	private Date expiredDate;
+	private long expiredDate;
 	
+	@DatabaseField
+	private boolean isMoney;
+	
+	@DatabaseField(columnName=PERSON_NAME_FIELD, foreign=true, foreignAutoRefresh= true)
+	private Person person;
+	
+	
+	public Debt (){
+		super();
+	}
+	
+	public Debt (long oweDate){
+		super();
+		this.oweDate = oweDate;
+		this.type = DebtType.separator;
+	}
+	
+	public Debt(boolean isMyDebt,  DebtType type,
+			BigDecimal debtAmount, String comments, double interest,
+			InterestType interestType, long oweDate, long expiredDate) {
+		super();
+//		this.name = name;
+		this.debtAmount = debtAmount;
+		this.comments = comments;
+		this.interest = interest;
+		this.interestType = interestType;
+		this.oweDate = oweDate;
+		this.expiredDate = expiredDate;
+	}
+	
+	
+
 	public int getDebtId() {
 		return debtId;
 	}
 
 	public void setDebtId(int debtId) {
 		this.debtId = debtId;
-	}
-
-	public boolean isMyDebt() {
-		return isMyDebt;
-	}
-
-	public void setMyDebt(boolean isMyDebt) {
-		this.isMyDebt = isMyDebt;
 	}
 
 	public String getName() {
@@ -94,31 +120,58 @@ public class Debt {
 		this.interest = interest;
 	}
 
-	public TypeOfInterest getInterestType() {
+	public InterestType getInterestType() {
 		return interestType;
 	}
 
-	public void setInterestType(TypeOfInterest interestType) {
+	public void setInterestType(InterestType interestType) {
 		this.interestType = interestType;
 	}
 
-	public Date getOweDate() {
+	public long getOweDate() {
 		return oweDate;
 	}
 
-	public void setOweDate(Date oweDate) {
+	public void setOweDate(long oweDate) {
 		this.oweDate = oweDate;
 	}
 
-	public Date getExpiredDate() {
+	public long getExpiredDate() {
 		return expiredDate;
 	}
 
-	public void setExpiredDate(Date expiredDate) {
+	public void setExpiredDate(long expiredDate) {
 		this.expiredDate = expiredDate;
 	}
 
-	public enum TypeOfInterest {
-		daily, monthly
+	public Person getPerson() {
+		return person;
 	}
+
+
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+
+
+	public DebtType getType() {
+		return type;
+	}
+
+
+
+	public void setType(DebtType type) {
+		this.type = type;
+	}
+
+	public boolean isMoney() {
+		return isMoney;
+	}
+
+	public void setMoney(boolean isMoney) {
+		this.isMoney = isMoney;
+	}
+
 }

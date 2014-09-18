@@ -5,23 +5,36 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable
 public class Person {
+	public static final String COLUMN_NAME = "person_name";
+	public static final String COlUMN_CONTACT_KEY = "person_contact_key";
+	public static final String COLUMN_CONTACT_ID = "person_contact_id";
 	
 	@DatabaseField(generatedId=true)
 	private int pId;
 	
-	@DatabaseField
+	@DatabaseField (columnName=COLUMN_NAME)
 	private String name;
 	
 	@DatabaseField
 	private String msidsn;
 	
+	@DatabaseField(columnName=COlUMN_CONTACT_KEY)
+	private String contactKey;
+	
+	@DatabaseField(columnName=COLUMN_CONTACT_ID)
+	private long contactId;
+	
+	
+	public Person(){
+		super();
+	}
 	
 
-	public Person(int pId, String name, String msidsn) {
+	public Person(String name, String contactKey, long contactId) {
 		super();
-		this.pId = pId;
 		this.name = name;
-		this.msidsn = msidsn;
+		this.contactId = contactId;
+		this.contactKey = contactKey;
 	}
 
 	public int getpId() {
@@ -46,6 +59,22 @@ public class Person {
 
 	public void setMsidsn(String msidsn) {
 		this.msidsn = msidsn;
+	}
+
+	public String getContactKey() {
+		return contactKey;
+	}
+
+	public void setContactKey(String contactKey) {
+		this.contactKey = contactKey;
+	}
+
+	public long getContactId() {
+		return contactId;
+	}
+
+	public void setContactId(long contactId) {
+		this.contactId = contactId;
 	}
 	
 	

@@ -14,6 +14,7 @@ package niceutility.hoa.owedebtmanager.database;
 import java.sql.SQLException;
 
 import niceutility.hoa.owedebtmanager.data.Debt;
+import niceutility.hoa.owedebtmanager.data.Person;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -33,17 +34,30 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper{
 	
 	//DAO object to access friends table
 	private Dao<Debt, Integer> debtDao = null;
+	private Dao<Person, Integer> personDao = null;
 	
-	public Dao<Debt, Integer> getFriendDao() throws SQLException {
+	public Dao<Debt, Integer> getDebtDao() throws SQLException {
 		if (debtDao == null) {
-//			TableUtils.dropTable(connectionSource, WhoIsPlaying.class, true);
-			
-			
+			TableUtils.dropTable(connectionSource, Debt.class, true);
+			TableUtils.dropTable(connectionSource, Person.class, true);
+			TableUtils.createTableIfNotExists(connectionSource, Debt.class);
+			TableUtils.createTableIfNotExists(connectionSource, Person.class);
+
 			debtDao = getDao(Debt.class);
 		}
 		
 		return debtDao;
 	}
+	
+	public Dao<Person, Integer> getPersonDao() throws SQLException {
+		if (personDao == null) {
+//			TableUtils.dropTable(connectionSource, WhoIsPlaying.class, true);
+			personDao = getDao(Person.class);
+		}
+		
+		return personDao;
+	}
+	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		
@@ -57,6 +71,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper{
 		try {
 			// here we create tables
 			TableUtils.createTableIfNotExists(connectionSource, Debt.class);
+			TableUtils.createTableIfNotExists(connectionSource, Person.class);
 			
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
@@ -71,6 +86,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper{
 		try {
 			Log.i(DatabaseHelper.class.getName(), "onUpgrade");
 			TableUtils.dropTable(connectionSource, Debt.class, true);
+			TableUtils.dropTable(connectionSource, Person.class, true);
 			// after we drop the old databases, we create the new ones
 			onCreate(db, connectionSource);
 		} catch (SQLException e) {

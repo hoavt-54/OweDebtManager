@@ -26,7 +26,8 @@
     <!-- strings in create new debt activity -->
 	<string name="debt_field_name_titile">Debt name</string>
 	<string name="amount_field_name_title">Amount owed</string>
-	<string name="contact_field_name_title">Contact</string>
+	<string name="item_name_title">Item owed</string>
+	<string name="contact_field_name_title">Debtor</string>
 	<string name="select_contact_hint">Select a contact</string>
 	<string name="owe_date_field_name_title">Owe date</string>
 	<string name="expired_date_field_name_title">Expired date</string>
@@ -42,4 +43,37 @@
 	
 	<string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	<string name="action_search">Search</string>
+	
+	
+	<string-array name="interest_type_array">
+	    <item >No interest</item>
+	    <item>Daily</item>
+        <item>Monthly</item>
+        
+    </string-array>
+    
+	<string name="no_interest">No interest</string>
+	<string name="daily">Daily</string>
+	<string name="monthly">Monthly</string>
+    
+	<string name="debt_name_empty_error">Give this debt a name!</string>
+	<string name="debt_amount_empty_error">Enter debt amount!</string>
+	<string name="contact_empty_error">Enter debtor name or select a contact!</string>
+	<string name="save_anway">Don\'t set!</string>
+	<string name="interest_type_error">You have not select interest type!</string>
+	<string name="interest_value_error">You have not specify interest value!</string>
+	<string name="dialog_creating_new_debt_message">Creating new debt &#8230;</string>
+	
+	<string name="cancel">Cancel</string>
+	
+	<string name="today">Today</string>
+	<string name="yesterday">Yesterday</string>
+	<string name="day_ago">days ago</string>
+	<string name="this_month">This month</string>
+	<string name="last_month">Last month</string>
+	
+	<!-- radio strings -->
+	
+	<string name="radio_money">Money</string>
+	<string name="radio_item">Item</string>
 </resources>

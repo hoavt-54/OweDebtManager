@@ -8,6 +8,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -15,26 +16,36 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="niceutility.hoa.owedebtmanager.android.CreateNewDebt" >
 
-        <!-- debt name -->
-
-        <TextView
-            android:id="@+id/debt_name_txtView"
-            style="@style/input_field_title"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginBottom="5dp"
-            android:text="@string/debt_field_name_titile" />
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
 
-        <EditText
-            android:id="@+id/debt_name_edit_text"
-            style="@style/input_field_edit_text"
+            <RadioButton
+                android:id="@+id/radio_money_debt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:checked="true"
+                android:onClick="onRadioButtonClicked"
+                android:text="@string/radio_money" />
+
+            <RadioButton
+                android:id="@+id/radio_item"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:onClick="onRadioButtonClicked"
+                android:text="@string/radio_item" />
+        </RadioGroup>
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" >
-
-            <requestFocus />
-        </EditText>
+            android:layout_height="1dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/them_color1" />
 
         <!-- amount of debt -->
 
@@ -52,15 +63,50 @@
             style="@style/input_field_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
+            android:background="@android:color/transparent"
+            android:hint="0.0$"
             android:inputType="number" >
         </EditText>
+
+        <!-- name of item -->
+
+        <TextView
+            android:id="@+id/item_title_txtView"
+            style="@style/input_field_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="5dp"
+            android:text="@string/item_name_title"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/item_name_edit_text"
+            style="@style/input_field_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="A laptop?"
+            android:inputType="number"
+            android:visibility="gone" >
+        </EditText>
+
+        <!-- seperator -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/them_color1" />
 
         <!-- contact of debt -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal" >
 
             <TextView
@@ -68,8 +114,7 @@
                 style="@style/input_field_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_vertical|left"
                 android:text="@string/contact_field_name_title" />
 
             <TextView
@@ -79,14 +124,13 @@
                 android:gravity="center_horizontal"
                 android:text="@string/or" />
 
-            <TextView
-                android:id="@+id/select_contact_title_text_vew"
+            <Button
+                android:id="@+id/add_contact_button"
                 style="@style/input_field_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginBottom="5dp"
-                android:paddingRight="15dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/abc_spinner_ab_holo_light"
                 android:text="@string/select_contact_hint" />
         </LinearLayout>
 
@@ -100,25 +144,20 @@
                 style="@style/input_field_edit_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_weight="1" >
+                android:layout_marginRight="20dp"
+                android:layout_weight="1"
+                android:inputType="textImeMultiLine"
+                android:maxLines="1" >
             </EditText>
-
-            <Button
-                android:id="@+id/add_contact_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="5dp"
-                android:background="@drawable/abc_spinner_ab_holo_light" />
 
             <LinearLayout
                 android:id="@+id/contact_area_wrapper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-              android:visibility="gone">
+                android:visibility="invisible" >
 
-                <ImageView
+                <QuickContactBadge
                     android:id="@+id/contact_preview_profile_image"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
@@ -130,81 +169,173 @@
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/abc_ic_clear"
-                    android:paddingLeft="25dp"
-                    android:paddingRight="20dp" />
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="25dp"
+                    android:background="@drawable/abc_ic_clear" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- start date of debt -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/them_color1" />
 
-        <TextView
-            android:id="@+id/owe_date_title_text_vew"
-            style="@style/input_field_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginBottom="5dp"
-            android:text="@string/owe_date_field_name_title" />
-
-        <Spinner
-            android:id="@+id/owe_date_spinner"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
 
-        <!-- Expired date of debt -->
+            <!-- start date of debt -->
 
-        <TextView
-            android:id="@+id/expired_date_title_text_view"
-            style="@style/input_field_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginBottom="5dp"
-            android:text="@string/expired_date_field_name_title" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:orientation="vertical" >
 
-        <Spinner
-            android:id="@+id/expired_date_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+                <TextView
+                    android:id="@+id/owe_date_title_text_vew"
+                    style="@style/input_field_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/owe_date_field_name_title" />
 
+                <TextView
+                    android:id="@+id/owe_date_value_txview"
+                    style="@style/date_value_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Sep 5th 2014" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <!-- Expired date of debt -->
+
+                <TextView
+                    android:id="@+id/expired_date_title_text_view"
+                    style="@style/input_field_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/expired_date_field_name_title" />
+
+                <TextView
+                    android:id="@+id/expired_date_value_txview"
+                    style="@style/date_value_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Sep 5th 2014" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/them_color1" />
+        
+        
         <!-- Interest type of debt -->
 
-        <TextView
-            android:id="@+id/interest_type_title_text_view"
-            style="@style/input_field_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginBottom="5dp"
-            android:text="@string/interest_type_field_name_title" />
-
-        <Spinner
-            android:id="@+id/interest_type_spinner"
+        <LinearLayout
+            android:id="@+id/interest_area_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            android:orientation="vertical" >
 
-        <!-- Interest of debt -->
+            
 
-        <TextView
-            android:id="@+id/interest_titile_text_view"
-            style="@style/input_field_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginBottom="5dp"
-            android:text="@string/interest_field_name_title" />
+            <TextView
+                android:id="@+id/interest_type_title_text_view"
+                style="@style/input_field_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="5dp"
+                android:text="@string/interest_type_field_name_title" />
 
-        <EditText
-            android:id="@+id/interest_editext"
-            style="@style/input_field_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp" />
+            <RadioGroup
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
 
+                <RadioButton
+                    android:id="@+id/radio_no_interest"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.7"
+                    android:checked="true"
+                    android:lines="2"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="@string/no_interest" />
+
+                <RadioButton
+                    android:id="@+id/radio_daily"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="@string/daily" />
+
+                <RadioButton
+                    android:id="@+id/radio_monthly"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:onClick="onRadioButtonClicked"
+                    android:text="@string/monthly" />
+            </RadioGroup>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/them_color1" />
+
+            <!-- Interest of debt -->
+
+            <TextView
+                android:id="@+id/interest_titile_text_view"
+                style="@style/input_field_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginBottom="5dp"
+                android:text="@string/interest_field_name_title" />
+
+            <EditText
+                android:id="@+id/interest_editext"
+                style="@style/input_field_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="0.0%"
+                android:inputType="number" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/them_color1" />
+        </LinearLayout>
         <!-- reminder of this debt -->
 
         <TextView

@@ -4,4 +4,9 @@
          resource files or even code and it only needs to be updated in one place if we wanted
          to change it. -->
     <color name="holo_blue">#FF33B5E5</color>
+    <color name="mydebt_list_background">#E9EAED</color>
+    <color name="trans_color">#ffff</color>
+    <color name="white">#fff</color>
+    <color name="my_debt_item">#fff</color>
+    <color name="them_color1">#75C148</color>
 </resources>

@@ -1,9 +1,16 @@
 package niceutility.hoa.owedebtmanager.android;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import niceutility.hoa.owedebtmanager.R;
 import niceutility.hoa.owedebtmanager.data.Debt;
+import niceutility.hoa.owedebtmanager.data.Person;
 import niceutility.hoa.owedebtmanager.database.DatabaseHelper;
 import android.app.ActionBar;
 import android.app.ActionBar.Tab;
@@ -11,30 +18,42 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 
 public class MainActivity extends ActionBarActivity {
 
 	public static final int CREATE_NEW_DEBT_REQUEST_CODE = 1;
-	
+	public static final String LOG_TAG = "OWE_DEBT_MainActivity";
 	private ActionBar actionBar;
 	
 	public static DatabaseHelper databaseHelper;
+	private static Dao<Debt, Integer> debtDao;
+	private Dao<Person, Integer> personDao;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		//get database connection
+		databaseHelper = getHelper();
+		try {
+			debtDao = databaseHelper.getDebtDao();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		//set up actionBar with tab mode
 		actionBar = getActionBar();
@@ -94,6 +113,19 @@ public class MainActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == CREATE_NEW_DEBT_REQUEST_CODE
+				&& resultCode == RESULT_OK) {
+			Fragment frg = null;
+			frg = getFragmentManager().findFragmentByTag(
+					getString(R.string.tab_my_debt_title));
+			((Refreshable) frg).refresh();
+			
+		}
+		
+		super.onActivityResult(requestCode, resultCode, data);
+	}
 	
 	//get DatabaseHelper to communicate with Ormlite
 	public DatabaseHelper getHelper() {
@@ -116,20 +148,129 @@ public class MainActivity extends ActionBarActivity {
 	/**
 	 * A placeholder fragment for listing my debt
 	 */
-	public static class MyDebtFragment extends Fragment {
+	public static class MyDebtFragment extends Fragment implements Refreshable{
 
 		private List<Debt> listMyDebts;
 		private ListView myDebtListView;
-		public MyDebtFragment() {
+		private DebtAdapter myDebtAdapter;
+		;
+		/*public MyDebtFragment() {
 			
-		}
-
+		}*/
+		
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_my_debt, container,
 					false);
+			myDebtListView = (ListView) rootView.findViewById(R.id.my_debts_list_view);
+			listMyDebts = new ArrayList<Debt>();
+			myDebtAdapter = new DebtAdapter(getActivity(), listMyDebts);
+			myDebtListView.setAdapter(myDebtAdapter);
 			return rootView;
+		}
+		
+		@Override
+		public void onViewCreated(View view, Bundle savedInstanceState) {
+			super.onViewCreated(view, savedInstanceState);
+			
+AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
+				
+				@Override
+				protected Void doInBackground(Void... params) {
+					try {
+						SimpleDateFormat sameMonthFormat = new SimpleDateFormat("MM yyyy", Locale.US);
+						listMyDebts.clear();
+						List<Debt> tmpList = debtDao.queryForAll();
+						Collections.sort(tmpList, new Comparator<Debt>() {
+
+							@Override
+							public int compare(Debt lhs, Debt rhs) {
+								long difference = lhs.getOweDate() - rhs.getOweDate();
+								return difference > 0 ? -1 : 1;
+							}
+						});
+						if (tmpList.size() > 0){
+							listMyDebts.add(new Debt(tmpList.get(0).getOweDate()));
+							listMyDebts.add(tmpList.get(0));
+							for (int i = 1; i < tmpList.size(); i ++){
+								Debt thisDebt = tmpList.get(i);
+								Date thisDebtOweDate = new Date(thisDebt.getOweDate());
+								Debt lastDebt = tmpList.get(i -1);
+								if (sameMonthFormat.format(thisDebtOweDate).equals(sameMonthFormat.format(new Date(lastDebt.getOweDate()))) ){
+									listMyDebts.add(thisDebt);
+								}
+								else{ // add separator before add debt
+									listMyDebts.add(new Debt(thisDebt.getOweDate()));
+									listMyDebts.add(thisDebt);
+								}
+							}
+						}
+//						listMyDebts.addAll(tmpList);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return null;
+				}
+				@Override
+				protected void onPostExecute(Void result) {
+					myDebtAdapter.notifyDataSetChanged();
+					Log.v(LOG_TAG, "my owe size: " + listMyDebts.size());
+					super.onPostExecute(result);
+				}
+			};
+			loadDebtTask.execute();
+		}
+		
+		public void refresh(){
+			AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
+				
+				@Override
+				protected Void doInBackground(Void... params) {
+					try {
+						SimpleDateFormat sameMonthFormat = new SimpleDateFormat("MM yyyy", Locale.US);
+						listMyDebts.clear();
+						List<Debt> tmpList = debtDao.queryForAll();
+						Collections.sort(tmpList, new Comparator<Debt>() {
+
+							@Override
+							public int compare(Debt lhs, Debt rhs) {
+								long difference = lhs.getOweDate() - rhs.getOweDate();
+								return difference > 0 ? -1 : 1;
+							}
+						});
+						if (tmpList.size() > 0){
+							listMyDebts.add(new Debt(tmpList.get(0).getOweDate()));
+							listMyDebts.add(tmpList.get(0));
+							for (int i = 1; i < tmpList.size(); i ++){
+								Debt thisDebt = tmpList.get(i);
+								Date thisDebtOweDate = new Date(thisDebt.getOweDate());
+								Debt lastDebt = tmpList.get(i -1);
+								if (sameMonthFormat.format(thisDebtOweDate).equals(sameMonthFormat.format(new Date(lastDebt.getOweDate()))) ){
+									listMyDebts.add(thisDebt);
+								}
+								else{ // add separator before add debt
+									listMyDebts.add(new Debt(thisDebt.getOweDate()));
+									listMyDebts.add(thisDebt);
+								}
+							}
+						}
+//						listMyDebts.addAll(tmpList);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return null;
+				}
+				@Override
+				protected void onPostExecute(Void result) {
+					myDebtAdapter.notifyDataSetChanged();
+					Log.v(LOG_TAG, "my owe size: " + listMyDebts.size());
+					super.onPostExecute(result);
+				}
+			};
+			loadDebtTask.execute();
+
 		}
 	}
 
@@ -216,44 +357,26 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 	
-	
-	public class DebtAdapter extends BaseAdapter {
-		private Activity activity;
-		private List<Debt> listDebts;
-		public DebtAdapter (Activity activity, List<Debt> listDebts){
-			this.activity = activity;
-			this.listDebts = listDebts;
-		}
-		@Override
-		public int getCount() {
-			return listDebts.size();
-		}
+	public class GetDebtTask extends AsyncTask<Boolean, Void, Void> {
 
 		@Override
-		public Debt getItem(int position) {	
-			return listDebts.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup arg2) {
-			View view = convertView;
-			if (view == null){
-//				Layou
+		protected Void doInBackground(Boolean... params) {
+			boolean isMyDebt = params[0];
+			
+			try {
+				// query all for now :D
+				List<Debt> debts = debtDao.queryForAll();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			
-			return view;
+			return null;
 		}
 		
-		
-		public class DebtViewHolder {
-			
-		}
-		
+	}
+	
+	public interface Refreshable{
+		public void refresh();
 	}
 	
 }
