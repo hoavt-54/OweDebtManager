@@ -37,56 +37,65 @@ public class MainActivity extends ActionBarActivity {
 	public static final int CREATE_NEW_DEBT_REQUEST_CODE = 1;
 	public static final String LOG_TAG = "OWE_DEBT_MainActivity";
 	private ActionBar actionBar;
-	
+
 	public static DatabaseHelper databaseHelper;
 	private static Dao<Debt, Integer> debtDao;
-	private Dao<Person, Integer> personDao;
-	
+	private static Dao<Person, Integer> personDao;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		//get database connection
+
+		// get database connection
 		databaseHelper = getHelper();
 		try {
 			debtDao = databaseHelper.getDebtDao();
+			personDao = databaseHelper.getPersonDao();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//set up actionBar with tab mode
+
+		// set up actionBar with tab mode
 		actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		
-		//create tab my debt contains which I owe people
-		 Tab tab = actionBar.newTab()
-				.setTag("my_debt")
-                .setText(R.string.tab_my_debt_title)
-                .setTabListener(new MyTabListener<MyDebtFragment>(this, 
-                						getString(R.string.tab_my_debt_title), MyDebtFragment.class));
-		 //add and set this tab as default
-		 actionBar.addTab(tab, true);
-		 
-		 
-		 //create tab shows which debt people owe me
-		 tab = actionBar.newTab()
-				 .setTag("their_debt")
-				 .setText(R.string.tab_their_debt_title)
-				 .setTabListener(new MyTabListener<TheirDebtToMeFragment>(this, 
-						 			getString(R.string.tab_people_title), TheirDebtToMeFragment.class));
 
-		 //add this tab to action bar
-		 actionBar.addTab(tab);
-		 
-		 //create tab shows people
-		 tab = actionBar.newTab()
-				 .setTag("people")
-				 .setText(R.string.tab_people_title)
-				 .setTabListener(new MyTabListener<PeopleFragments>(this, 
-						 getString(R.string.tab_people_title), PeopleFragments.class));
-		 
-		 actionBar.addTab(tab);
+		// create tab my debt contains which I owe people
+		Tab tab = actionBar
+				.newTab()
+				.setTag("my_debt")
+				.setText(R.string.tab_my_debt_title)
+				.setTabListener(
+						new MyTabListener<MyDebtFragment>(this,
+								getString(R.string.tab_my_debt_title),
+								MyDebtFragment.class));
+		// add and set this tab as default
+		actionBar.addTab(tab, true);
+
+		// create tab shows which debt people owe me
+		tab = actionBar
+				.newTab()
+				.setTag("their_debt")
+				.setText(R.string.tab_their_debt_title)
+				.setTabListener(
+						new MyTabListener<TheirDebtToMeFragment>(this,
+								getString(R.string.tab_people_title),
+								TheirDebtToMeFragment.class));
+
+		// add this tab to action bar
+		actionBar.addTab(tab);
+
+		// create tab shows people
+		tab = actionBar
+				.newTab()
+				.setTag("people")
+				.setText(R.string.tab_people_title)
+				.setTabListener(
+						new MyTabListener<PeopleFragments>(this,
+								getString(R.string.tab_people_title),
+								PeopleFragments.class));
+
+		actionBar.addTab(tab);
 	}
 
 	@Override
@@ -105,8 +114,7 @@ public class MainActivity extends ActionBarActivity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
-		}
-		else if (id == R.id.action_create_new_debt){
+		} else if (id == R.id.action_create_new_debt) {
 			Intent intent = new Intent(this, CreateNewDebt.class);
 			startActivityForResult(intent, CREATE_NEW_DEBT_REQUEST_CODE);
 		}
@@ -121,98 +129,108 @@ public class MainActivity extends ActionBarActivity {
 			frg = getFragmentManager().findFragmentByTag(
 					getString(R.string.tab_my_debt_title));
 			((Refreshable) frg).refresh();
-			
+
 		}
-		
+
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
-	//get DatabaseHelper to communicate with Ormlite
+
+	// get DatabaseHelper to communicate with Ormlite
 	public DatabaseHelper getHelper() {
 		if (databaseHelper == null) {
-			databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
+			databaseHelper = OpenHelperManager.getHelper(this,
+					DatabaseHelper.class);
 		}
 		return databaseHelper;
 	}
-	
-	
+
 	@Override
 	protected void onDestroy() {
-		if (databaseHelper != null){
+		if (databaseHelper != null) {
 			OpenHelperManager.releaseHelper();
 			databaseHelper = null;
 		}
 		super.onDestroy();
 	}
-	
+
 	/**
 	 * A placeholder fragment for listing my debt
 	 */
-	public static class MyDebtFragment extends Fragment implements Refreshable{
+	public static class MyDebtFragment extends Fragment implements Refreshable {
 
 		private List<Debt> listMyDebts;
 		private ListView myDebtListView;
-		private DebtAdapter myDebtAdapter;
-		;
-		/*public MyDebtFragment() {
-			
-		}*/
-		
-		
+		private DebtAdapter myDebtAdapter;;
+
+		/*
+		 * public MyDebtFragment() {
+		 * 
+		 * }
+		 */
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_my_debt, container,
-					false);
-			myDebtListView = (ListView) rootView.findViewById(R.id.my_debts_list_view);
+			View rootView = inflater.inflate(R.layout.fragment_my_debt,
+					container, false);
+			myDebtListView = (ListView) rootView
+					.findViewById(R.id.my_debts_list_view);
 			listMyDebts = new ArrayList<Debt>();
 			myDebtAdapter = new DebtAdapter(getActivity(), listMyDebts);
 			myDebtListView.setAdapter(myDebtAdapter);
 			return rootView;
 		}
-		
+
 		@Override
 		public void onViewCreated(View view, Bundle savedInstanceState) {
 			super.onViewCreated(view, savedInstanceState);
-			
-AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
-				
+
+			AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
+
 				@Override
 				protected Void doInBackground(Void... params) {
 					try {
-						SimpleDateFormat sameMonthFormat = new SimpleDateFormat("MM yyyy", Locale.US);
+						SimpleDateFormat sameMonthFormat = new SimpleDateFormat(
+								"MM yyyy", Locale.US);
 						listMyDebts.clear();
 						List<Debt> tmpList = debtDao.queryForAll();
 						Collections.sort(tmpList, new Comparator<Debt>() {
 
 							@Override
 							public int compare(Debt lhs, Debt rhs) {
-								long difference = lhs.getOweDate() - rhs.getOweDate();
+								long difference = lhs.getOweDate()
+										- rhs.getOweDate();
 								return difference > 0 ? -1 : 1;
 							}
 						});
-						if (tmpList.size() > 0){
-							listMyDebts.add(new Debt(tmpList.get(0).getOweDate()));
+						if (tmpList.size() > 0) {
+							listMyDebts.add(new Debt(tmpList.get(0)
+									.getOweDate()));
 							listMyDebts.add(tmpList.get(0));
-							for (int i = 1; i < tmpList.size(); i ++){
+							for (int i = 1; i < tmpList.size(); i++) {
 								Debt thisDebt = tmpList.get(i);
-								Date thisDebtOweDate = new Date(thisDebt.getOweDate());
-								Debt lastDebt = tmpList.get(i -1);
-								if (sameMonthFormat.format(thisDebtOweDate).equals(sameMonthFormat.format(new Date(lastDebt.getOweDate()))) ){
+								Date thisDebtOweDate = new Date(
+										thisDebt.getOweDate());
+								Debt lastDebt = tmpList.get(i - 1);
+								if (sameMonthFormat.format(thisDebtOweDate)
+										.equals(sameMonthFormat
+												.format(new Date(lastDebt
+														.getOweDate())))) {
 									listMyDebts.add(thisDebt);
-								}
-								else{ // add separator before add debt
-									listMyDebts.add(new Debt(thisDebt.getOweDate()));
+								} else { // add separator before add debt
+									listMyDebts.add(new Debt(thisDebt
+											.getOweDate()));
 									listMyDebts.add(thisDebt);
 								}
 							}
 						}
-//						listMyDebts.addAll(tmpList);
+						// listMyDebts.addAll(tmpList);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					return null;
 				}
+
 				@Override
 				protected void onPostExecute(Void result) {
 					myDebtAdapter.notifyDataSetChanged();
@@ -222,46 +240,54 @@ AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
 			};
 			loadDebtTask.execute();
 		}
-		
-		public void refresh(){
+
+		public void refresh() {
 			AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
-				
+
 				@Override
 				protected Void doInBackground(Void... params) {
 					try {
-						SimpleDateFormat sameMonthFormat = new SimpleDateFormat("MM yyyy", Locale.US);
+						SimpleDateFormat sameMonthFormat = new SimpleDateFormat(
+								"MM yyyy", Locale.US);
 						listMyDebts.clear();
 						List<Debt> tmpList = debtDao.queryForAll();
 						Collections.sort(tmpList, new Comparator<Debt>() {
 
 							@Override
 							public int compare(Debt lhs, Debt rhs) {
-								long difference = lhs.getOweDate() - rhs.getOweDate();
+								long difference = lhs.getOweDate()
+										- rhs.getOweDate();
 								return difference > 0 ? -1 : 1;
 							}
 						});
-						if (tmpList.size() > 0){
-							listMyDebts.add(new Debt(tmpList.get(0).getOweDate()));
+						if (tmpList.size() > 0) {
+							listMyDebts.add(new Debt(tmpList.get(0)
+									.getOweDate()));
 							listMyDebts.add(tmpList.get(0));
-							for (int i = 1; i < tmpList.size(); i ++){
+							for (int i = 1; i < tmpList.size(); i++) {
 								Debt thisDebt = tmpList.get(i);
-								Date thisDebtOweDate = new Date(thisDebt.getOweDate());
-								Debt lastDebt = tmpList.get(i -1);
-								if (sameMonthFormat.format(thisDebtOweDate).equals(sameMonthFormat.format(new Date(lastDebt.getOweDate()))) ){
+								Date thisDebtOweDate = new Date(
+										thisDebt.getOweDate());
+								Debt lastDebt = tmpList.get(i - 1);
+								if (sameMonthFormat.format(thisDebtOweDate)
+										.equals(sameMonthFormat
+												.format(new Date(lastDebt
+														.getOweDate())))) {
 									listMyDebts.add(thisDebt);
-								}
-								else{ // add separator before add debt
-									listMyDebts.add(new Debt(thisDebt.getOweDate()));
+								} else { // add separator before add debt
+									listMyDebts.add(new Debt(thisDebt
+											.getOweDate()));
 									listMyDebts.add(thisDebt);
 								}
 							}
 						}
-//						listMyDebts.addAll(tmpList);
+						// listMyDebts.addAll(tmpList);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					return null;
 				}
+
 				@Override
 				protected void onPostExecute(Void result) {
 					myDebtAdapter.notifyDataSetChanged();
@@ -274,8 +300,6 @@ AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
 		}
 	}
 
-	
-	
 	/**
 	 * A placeholder fragment for listing my debt
 	 */
@@ -287,17 +311,23 @@ AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_their_debt_to_me, container,
-					false);
+			View rootView = inflater.inflate(
+					R.layout.fragment_their_debt_to_me, container, false);
 			return rootView;
 		}
+		
+		
+		
 	}
-	
 
 	/**
 	 * A placeholder fragment for listing my debt
 	 */
 	public static class PeopleFragments extends Fragment {
+
+		private ListView personListView;
+		private PersonAdapter personAdapter;
+		private List<Person> people;
 
 		public PeopleFragments() {
 		}
@@ -305,12 +335,54 @@ AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_people, container,
-					false);
+			View rootView = inflater.inflate(R.layout.fragment_people,
+					container, false);
+			personListView = (ListView) rootView
+					.findViewById(R.id.people_listview);
+			people = new ArrayList<Person>();
+			personAdapter = new PersonAdapter(people, getActivity());
+			personListView.setAdapter(personAdapter);
+
 			return rootView;
 		}
+		
+		
+		
+		
+		@Override
+		public void onViewCreated(View view, Bundle savedInstanceState) {
+			
+			AsyncTask<Void, Void, Void> getPeopleTask = new AsyncTask<Void, Void, Void>() {
+				
+				@Override
+				protected Void doInBackground(Void... params) {
+					
+					try {
+						people.clear();
+						people.addAll(personDao.queryForAll());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+					return null;
+				}
+				
+				
+				@Override
+				protected void onPostExecute(Void result) {
+					personAdapter.notifyDataSetChanged();
+					super.onPostExecute(result);
+				}
+			};
+			
+			getPeopleTask.execute();
+			super.onViewCreated(view, savedInstanceState);
+		}
+		
+		
+		
 	}
-	
+
 	private class MyTabListener<T extends Fragment> implements
 			ActionBar.TabListener {
 		private Fragment mFragment;
@@ -319,13 +391,14 @@ AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
 		private final Class<T> mClass;
 
 		/**
-		 * Constructor used each time a new tab is created. * 
+		 * Constructor used each time a new tab is created. *
+		 * 
 		 * @param activity
-		 * The host Activity, used to instantiate the fragment
+		 *            The host Activity, used to instantiate the fragment
 		 * @param tag
-		 * The identifier tag for the fragment
+		 *            The identifier tag for the fragment
 		 * @param clz
-		 *   The fragment's Class, used to instantiate the fragment
+		 *            The fragment's Class, used to instantiate the fragment
 		 */
 		public MyTabListener(Activity activity, String tag, Class<T> clz) {
 			mActivity = activity;
@@ -356,27 +429,27 @@ AsyncTask<Void, Void, Void> loadDebtTask = new AsyncTask<Void, Void, Void>() {
 			// User selected the already selected tab. Usually do nothing.
 		}
 	}
-	
+
 	public class GetDebtTask extends AsyncTask<Boolean, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Boolean... params) {
 			boolean isMyDebt = params[0];
-			
+
 			try {
 				// query all for now :D
 				List<Debt> debts = debtDao.queryForAll();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
-		
+
 	}
-	
-	public interface Refreshable{
+
+	public interface Refreshable {
 		public void refresh();
 	}
-	
+
 }

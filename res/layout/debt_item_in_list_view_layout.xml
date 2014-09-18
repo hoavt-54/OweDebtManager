@@ -19,16 +19,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Binh - 2 500"
+            android:layout_marginBottom="5dp"
             style="@style/debt_name_in_list"
             />
 
-        <TextView
-            android:id="@+id/debt_content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="content"
-            style="@style/debt_content_in_list"
-             />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="horizontal">
+            <TextView
+            android:id="@+id/invalid_proportion"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+            android:background="@color/invalid_color"
+            style="@style/debt_content_in_list"/>
+            <TextView
+            android:id="@+id/valid_proportion"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="match_parent"
+            android:background="@color/valid_color"/>
+            
+        </LinearLayout>
+        <!--  -->
 
     </LinearLayout>
     <TextView

@@ -1,5 +1,7 @@
 package niceutility.hoa.owedebtmanager.data;
 
+import java.math.BigDecimal;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -24,13 +26,18 @@ public class Person {
 	@DatabaseField(columnName=COLUMN_CONTACT_ID)
 	private long contactId;
 	
+	@DatabaseField
+	private String profileUri;
+	
+	@DatabaseField
+	private BigDecimal balance;
 	
 	public Person(){
 		super();
 	}
 	
 
-	public Person(String name, String contactKey, long contactId) {
+	public Person(String name, String contactKey, long contactId, String profileUri) {
 		super();
 		this.name = name;
 		this.contactId = contactId;
@@ -75,6 +82,26 @@ public class Person {
 
 	public void setContactId(long contactId) {
 		this.contactId = contactId;
+	}
+
+
+	public String getProfileUri() {
+		return profileUri;
+	}
+
+
+	public void setProfileUri(String profileUri) {
+		this.profileUri = profileUri;
+	}
+
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 	
 	

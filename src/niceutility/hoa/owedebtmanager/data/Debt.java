@@ -65,7 +65,7 @@ public class Debt {
 		this.type = DebtType.separator;
 	}
 	
-	public Debt(boolean isMyDebt,  DebtType type,
+	public Debt(boolean isMyDebt, boolean isMoney,  DebtType type,
 			BigDecimal debtAmount, String comments, double interest,
 			InterestType interestType, long oweDate, long expiredDate) {
 		super();

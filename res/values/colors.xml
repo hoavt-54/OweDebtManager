@@ -9,4 +9,6 @@
     <color name="white">#fff</color>
     <color name="my_debt_item">#fff</color>
     <color name="them_color1">#75C148</color>
+    <color name="valid_color">#86B23F</color>
+    <color name="invalid_color">#C72527</color>
 </resources>

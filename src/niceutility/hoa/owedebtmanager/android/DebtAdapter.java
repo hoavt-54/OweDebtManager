@@ -9,13 +9,17 @@ import niceutility.hoa.owedebtmanager.R;
 import niceutility.hoa.owedebtmanager.data.Debt;
 import niceutility.hoa.owedebtmanager.data.Person;
 import android.app.Activity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 public class DebtAdapter extends BaseAdapter {
+	public static String LOG_TAG = "niceutility.hoa.owedebtmanager.android.DebtAdapter";
 	public static int DEBT_MY_DEBT_TYPE = 0;
 	public static int DEBT_OWE_ME_TYPE = 1;
 	public static int SEPARATOR = 2;
@@ -76,12 +80,13 @@ public class DebtAdapter extends BaseAdapter {
 			if (viewType == DEBT_MY_DEBT_TYPE){
 				view = LayoutInflater.from(activity).inflate(R.layout.debt_item_in_list_view_layout, null);
 				holder.mainTitle = (TextView) view.findViewById(R.id.debt_main_title);
-				holder.content = (TextView) view.findViewById(R.id.debt_content);
+				holder.validProportion = (TextView) view.findViewById(R.id.valid_proportion);
+				holder.invalidProportion = (TextView) view.findViewById(R.id.invalid_proportion);
 				holder.date = (TextView) view.findViewById(R.id.debt_date);
 			}
 			else if (viewType == SEPARATOR){
 				view = LayoutInflater.from(activity).inflate(R.layout.seperator_item_in_list_debt, null);
-				holder.content = (TextView) view.findViewById(R.id.separator_date_content_txtView);
+				holder.validProportion = (TextView) view.findViewById(R.id.separator_date_content_txtView);
 			}
 			view.setTag(holder);
 		}
@@ -100,7 +105,7 @@ public class DebtAdapter extends BaseAdapter {
 			else
 				personName = person.getName();
 			holder.mainTitle.setText(personName + " - " + debt.getDebtAmount());
-			holder.content.setText(" smthing here");
+			//holder.validProportion.setText(" smthing here");
 			
 			
 			// set date
@@ -119,14 +124,33 @@ public class DebtAdapter extends BaseAdapter {
 				
 				
 			}
+			
+			// calculate proportion for expired date
+			
+			int dayTotal =  (int) (Math.round( (debt.getExpiredDate() - debt.getOweDate()) / 86400000D ) - 1);
+			
+			int dayDifference = (int) (Math.round( (timeDifference) / 86400000D ) - 1);
+			
+			float invalidProportTion = ((float) dayDifference) / dayTotal;
+			LinearLayout.LayoutParams lp = new LayoutParams(0, LayoutParams.MATCH_PARENT);
+			lp.weight = invalidProportTion;
+			holder.invalidProportion.setLayoutParams(lp);
+			
+			LinearLayout.LayoutParams lp2 = new LayoutParams(0, LayoutParams.MATCH_PARENT);
+			lp2.weight = 1 - invalidProportTion;		
+			holder.validProportion.setLayoutParams(lp2);
+			
+			Log.v(LOG_TAG, "invalidate weight: " + invalidProportTion + "\t + valide weight: " + (1-invalidProportTion)) ;
+			
+			
 		}
 		else if (viewType == SEPARATOR){
 			Date thisSeparatorDate = new Date(debt.getOweDate());
 			if (sameMonthFormat.format(currentTime).equals(sameMonthFormat.format(thisSeparatorDate))){
-				holder.content.setText(activity.getString(R.string.this_month));
+				holder.validProportion.setText(activity.getString(R.string.this_month));
 			}
 			else 
-				holder.content.setText(sameMonthFormat.format(thisSeparatorDate));
+				holder.validProportion.setText(sameMonthFormat.format(thisSeparatorDate));
 		}
 		return view;
 	}
@@ -134,7 +158,8 @@ public class DebtAdapter extends BaseAdapter {
 	
 	public class DebtViewHolder {
 		TextView mainTitle;
-		TextView content;
+		TextView validProportion;
+		TextView invalidProportion;
 		TextView date;
 	}
 	

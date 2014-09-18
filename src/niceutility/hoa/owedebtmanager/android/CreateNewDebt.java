@@ -83,6 +83,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 	private String reminderComment;
 	private double interest;
 	private boolean isMoney;
+	private String profileImageUri;
 	private boolean askSetDate;
 	private boolean resetDate;
 	
@@ -344,7 +345,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 							.placeholder(R.drawable.user_placeholder)
 							.error(R.drawable.user_placeholder)
 							.fit().into(contactPreviewImage);
-						
+						profileImageUri = profileUri;
 						contactPreviewImage.assignContactUri(contactUri);
 						super.onPostExecute(cursor);
 					}
@@ -508,7 +509,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 	
 	public boolean createDebtInLocalDatabase (){
 		
-		newDebt = new Debt(true, DebtType.my_debt, debtAmount, 
+		newDebt = new Debt(true, isMoney, DebtType.my_debt, debtAmount, 
 					reminderComment, interest, interestType, oweDate.getTime(), expiredDate.getTime());
 		newDebt.setType(DebtType.my_debt);
 		AsyncTask< Void, Void, Void> saveTask =  new AsyncTask<Void, Void, Void>() {
@@ -547,7 +548,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 							person = listPotentialPeople.get(0);
 						}
 						else { //create new person
-							person = new Person(contactName, contactKey, contactId);
+							person = new Person(contactName, contactKey, contactId, profileImageUri);
 							personDao.create(person);
 							
 						}
