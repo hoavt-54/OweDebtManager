@@ -8,15 +8,22 @@ import java.util.Locale;
 import niceutility.hoa.owedebtmanager.R;
 import niceutility.hoa.owedebtmanager.data.Debt;
 import niceutility.hoa.owedebtmanager.data.Person;
+
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+
 import android.app.Activity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class DebtAdapter extends BaseAdapter {
 	public static String LOG_TAG = "niceutility.hoa.owedebtmanager.android.DebtAdapter";
@@ -37,6 +44,13 @@ public class DebtAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		return listDebts.size();
+	}
+	
+	@Override
+	public boolean isEnabled(int position) {
+		if (getItemViewType(position) == SEPARATOR)
+			return false;
+		return true;
 	}
 
 	@Override
@@ -79,6 +93,14 @@ public class DebtAdapter extends BaseAdapter {
 		if (view == null){
 			if (viewType == DEBT_MY_DEBT_TYPE){
 				view = LayoutInflater.from(activity).inflate(R.layout.debt_item_in_list_view_layout, null);
+				holder.debtIcon = (ImageView) view.findViewById(R.id.debt_icon);
+				holder.mainTitle = (TextView) view.findViewById(R.id.debt_main_title);
+				holder.validProportion = (TextView) view.findViewById(R.id.valid_proportion);
+				holder.invalidProportion = (TextView) view.findViewById(R.id.invalid_proportion);
+				holder.date = (TextView) view.findViewById(R.id.debt_date);
+			}else if (viewType == DEBT_OWE_ME_TYPE){
+				view = LayoutInflater.from(activity).inflate(R.layout.debt_item_in_list_view_layout, null);
+				holder.debtIcon = (ImageView) view.findViewById(R.id.debt_icon);
 				holder.mainTitle = (TextView) view.findViewById(R.id.debt_main_title);
 				holder.validProportion = (TextView) view.findViewById(R.id.valid_proportion);
 				holder.invalidProportion = (TextView) view.findViewById(R.id.invalid_proportion);
@@ -95,8 +117,23 @@ public class DebtAdapter extends BaseAdapter {
 		
 		// setdata
 		Debt debt = getItem(position);
-		Date currentTime = new Date();
-		if (viewType == DEBT_MY_DEBT_TYPE){
+		
+		if (viewType != SEPARATOR){
+			
+			//set Icon
+			if (debt.isMoney())
+				Picasso.with(activity)
+						.load(R.drawable.ic_lv_money)
+						.fit()
+						.into(holder.debtIcon);
+			else
+				Picasso.with(activity)
+						.load(R.drawable.ic_lv_things)
+						.fit()
+						.into(holder.debtIcon);
+			
+			
+			// set Main titile 
 			Person  person = debt.getPerson();
 			String personName = "";
 			if (person.getName().split(" ").length > 3)
@@ -104,32 +141,42 @@ public class DebtAdapter extends BaseAdapter {
 							+ person.getName().split(" ")[2] + " " + person.getName().split(" ")[3];
 			else
 				personName = person.getName();
-			holder.mainTitle.setText(personName + " - " + debt.getDebtAmount());
+			
+			if (debt.isMoney())
+				holder.mainTitle.setText(personName + " - " + debt.getDebtAmount());
+			else
+				holder.mainTitle.setText(personName + " - " + debt.getItemName());
 			//holder.validProportion.setText(" smthing here");
 			
 			
 			// set date
 			
-			long timeDifference = currentTime.getTime() - debt.getOweDate();
-			if (longAgoFormat.format(currentTime).equals(longAgoFormat.format(new Date(debt.getOweDate()))))
+			
+			
+			LocalDate currentTime = new LocalDate();
+			LocalDate oweDate = new LocalDate(debt.getOweDate());
+			LocalDate experiedDate = new LocalDate(debt.getExpiredDate());
+			
+			int dayDifference = Days.daysBetween(oweDate.toDateTimeAtStartOfDay(), currentTime.toDateTimeAtStartOfDay()).getDays();
+			if (dayDifference == 0)
 				holder.date.setText(activity.getString(R.string.today));
 			else{
-				int dayDifference = (int) (Math.round( (timeDifference) / 86400000D ) - 1);
 				if (dayDifference == 1)
 					holder.date.setText(activity.getString(R.string.yesterday));
 				else if (dayDifference <= 7) 
 					holder.date.setText(dayDifference + " " + activity.getString(R.string.day_ago));
 				else
 					holder.date.setText(longAgoFormat.format(debt.getOweDate()));
-				
-				
 			}
+			
+//			ca
 			
 			// calculate proportion for expired date
 			
-			int dayTotal =  (int) (Math.round( (debt.getExpiredDate() - debt.getOweDate()) / 86400000D ) - 1);
+			int dayTotal =  Days.daysBetween(oweDate.toDateTimeAtCurrentTime(), experiedDate.toDateTimeAtCurrentTime()).getDays();
+			if (dayTotal == 0) dayTotal = 1;
 			
-			int dayDifference = (int) (Math.round( (timeDifference) / 86400000D ) - 1);
+			Log.v(LOG_TAG, "total day: " + dayTotal);
 			
 			float invalidProportTion = ((float) dayDifference) / dayTotal;
 			LinearLayout.LayoutParams lp = new LayoutParams(0, LayoutParams.MATCH_PARENT);
@@ -140,13 +187,13 @@ public class DebtAdapter extends BaseAdapter {
 			lp2.weight = 1 - invalidProportTion;		
 			holder.validProportion.setLayoutParams(lp2);
 			
-			Log.v(LOG_TAG, "invalidate weight: " + invalidProportTion + "\t + valide weight: " + (1-invalidProportTion)) ;
+//			Log.v(LOG_TAG, "invalidate weight: " + invalidProportTion + "\t + valide weight: " + (1-invalidProportTion)) ;
 			
 			
 		}
 		else if (viewType == SEPARATOR){
 			Date thisSeparatorDate = new Date(debt.getOweDate());
-			if (sameMonthFormat.format(currentTime).equals(sameMonthFormat.format(thisSeparatorDate))){
+			if (sameMonthFormat.format(new Date()).equals(sameMonthFormat.format(thisSeparatorDate))){
 				holder.validProportion.setText(activity.getString(R.string.this_month));
 			}
 			else 
@@ -157,6 +204,7 @@ public class DebtAdapter extends BaseAdapter {
 	
 	
 	public class DebtViewHolder {
+		ImageView debtIcon;
 		TextView mainTitle;
 		TextView validProportion;
 		TextView invalidProportion;

@@ -5,6 +5,14 @@
     android:orientation="horizontal" 
     android:background="@color/my_debt_item">
     
+    <ImageView 
+        android:id="@+id/debt_icon"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:src="@drawable/ic_lv_money"/>
+    
     <LinearLayout
         android:layout_height="wrap_content"
         android:layout_width="0dp"

@@ -82,4 +82,12 @@
 
     <style name="addressButton"/>
     
+    
+    <!-- view debt activity -->
+    
+    <style name="view_amount_content">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
 </resources>

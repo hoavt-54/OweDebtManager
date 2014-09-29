@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin" >
+
+        <LinearLayout
+            android:id="@+id/amount_area_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/title_area_lyaout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/view_amount_tititle"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/balance_owed" />
+
+                <TextView
+                    android:id="@+id/view_interest_rate_titile_text_view"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/interest_rate" />
+
+                <TextView
+                    android:id="@+id/view_interest_type_title_text_view"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/interest_type_field_name_title" />
+
+                <TextView
+                    android:id="@+id/view_total_time"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_time" />
+                
+                <TextView
+                    android:id="@+id/view_interest_value_titile_text_view"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/interest" />
+                
+                
+                <TextView
+                    android:id="@+id/view_total_paid"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/total_paid" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/title_area_lyaoutfasdf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/view_amount_txtview_value"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$200" />
+
+                <TextView
+                    android:id="@+id/view_interest_value"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0.0%" />
+
+                <TextView
+                    android:id="@+id/view_interest_type"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="daily" />
+
+                <TextView
+                    android:id="@+id/view_total_time_value"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2days" />
+                 <TextView
+                    android:id="@+id/view_interest_paid_value"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$49" />
+                
+                
+                <TextView
+                    android:id="@+id/view_total_paid_value"
+                    style="@style/view_amount_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$249" />
+            </LinearLayout>
+        </LinearLayout>
+        
+        
+        <TextView 
+            android:id="@+id/view_item_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="A new latop"
+            android:layout_marginTop="20dp"
+            style="@style/view_amount_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/view_invalid_proportion"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_weight="0.5"
+                android:background="@color/invalid_color" />
+
+            <TextView
+                android:id="@+id/view_valid_proportion"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_weight="0.5"
+                android:background="@color/valid_color" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:orientation="horizontal" >
+
+            <!-- start date of debt -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/owe_date_title_text_vew"
+                    style="@style/input_field_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/owe_date_field_name_title" />
+
+                <TextView
+                    android:id="@+id/view_owe_date_value_txview"
+                    style="@style/date_value_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Sep 5th 2014" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:gravity="right"
+                android:orientation="vertical" >
+
+                <!-- Expired date of debt -->
+
+                <TextView
+                    android:id="@+id/expired_date_title_text_view"
+                    style="@style/input_field_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/expired_date_field_name_title" />
+
+                <TextView
+                    android:id="@+id/view_expired_date_value_txview"
+                    style="@style/date_value_field"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="Sep 5th 2014" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/them_color1" />
+
+        <!-- contact area -->
+
+        <TextView
+            android:id="@+id/view_contact_title"
+            style="@style/input_field_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/contact_field_name_title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <QuickContactBadge
+                android:id="@+id/view_contact_badge"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/user_placeholder" />
+
+            <TextView
+                android:id="@+id/view_contact_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="Binh beo" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/them_color1" />
+
+        <!-- Interest area -->
+
+       
+
+        <TextView
+            android:id="@+id/reminder_titile_text_view"
+            style="@style/input_field_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginBottom="5dp"
+            android:text="@string/reminder_field_titile" />
+
+        <TextView
+            android:id="@+id/view_reminder_content"
+            style="@style/date_value_field"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="it was on a very dark midnight ...." />
+    </LinearLayout>
+
+</ScrollView>

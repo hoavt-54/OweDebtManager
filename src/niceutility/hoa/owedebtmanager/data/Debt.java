@@ -33,6 +33,9 @@ public class Debt {
 	private BigDecimal debtAmount;
 	
 	@DatabaseField
+	private String itemName; 
+	
+	@DatabaseField
 	private String comments;
 	
 	@DatabaseField
@@ -65,7 +68,7 @@ public class Debt {
 		this.type = DebtType.separator;
 	}
 	
-	public Debt(boolean isMyDebt, boolean isMoney,  DebtType type,
+	public Debt(boolean isMoney,  DebtType type,
 			BigDecimal debtAmount, String comments, double interest,
 			InterestType interestType, long oweDate, long expiredDate) {
 		super();
@@ -76,9 +79,26 @@ public class Debt {
 		this.interestType = interestType;
 		this.oweDate = oweDate;
 		this.expiredDate = expiredDate;
+		this.isMoney = isMoney;
+		this.type = type;
 	}
 	
 	
+	
+	
+
+	public Debt(DebtType type, String name, String itemName, String comments,
+			long oweDate, long expiredDate, boolean isMoney, Person person) {
+		super();
+		this.type = type;
+		this.name = name;
+		this.itemName = itemName;
+		this.comments = comments;
+		this.oweDate = oweDate;
+		this.expiredDate = expiredDate;
+		this.isMoney = isMoney;
+		this.person = person;
+	}
 
 	public int getDebtId() {
 		return debtId;
@@ -172,6 +192,14 @@ public class Debt {
 
 	public void setMoney(boolean isMoney) {
 		this.isMoney = isMoney;
+	}
+
+	public String getItemName() {
+		return itemName;
+	}
+
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
 }

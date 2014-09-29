@@ -1,9 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="niceutility.hoa.owedebtmanager.CreateNewDebt" >
+    tools:context="niceutility.hoa.owedebtmanager.ViewDebtActivity" >
 
-    <item
+   
+    
+ <item
         android:id="@+id/action_done"
         android:icon="@drawable/abc_ic_cab_done_holo_dark"
         android:title="@string/action_done"
@@ -11,8 +13,9 @@
     
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_overflow"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>
-
+    
 </menu>

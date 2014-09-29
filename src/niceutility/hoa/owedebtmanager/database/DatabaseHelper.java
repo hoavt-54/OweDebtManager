@@ -38,10 +38,10 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper{
 	
 	public Dao<Debt, Integer> getDebtDao() throws SQLException {
 		if (debtDao == null) {
-			/*TableUtils.dropTable(connectionSource, Debt.class, true);
+			TableUtils.dropTable(connectionSource, Debt.class, true);
 			TableUtils.dropTable(connectionSource, Person.class, true);
 			TableUtils.createTableIfNotExists(connectionSource, Debt.class);
-			TableUtils.createTableIfNotExists(connectionSource, Person.class);*/
+			TableUtils.createTableIfNotExists(connectionSource, Person.class);
 
 			debtDao = getDao(Debt.class);
 		}

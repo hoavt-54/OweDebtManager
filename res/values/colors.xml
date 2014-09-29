@@ -5,6 +5,7 @@
          to change it. -->
     <color name="holo_blue">#FF33B5E5</color>
     <color name="mydebt_list_background">#E9EAED</color>
+    <color name="they_owe_me_background">#D3C984</color>
     <color name="trans_color">#ffff</color>
     <color name="white">#fff</color>
     <color name="my_debt_item">#fff</color>

@@ -10,6 +10,7 @@
         app:showAsAction="always"/>
     <item
         android:id="@+id/action_settings"
+        android:icon="@drawable/ic_action_overflow"
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never"/>

@@ -1,12 +1,16 @@
 package niceutility.hoa.owedebtmanager.android;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.List;
-
-import com.squareup.picasso.Picasso;
+import java.util.Locale;
 
 import niceutility.hoa.owedebtmanager.R;
 import niceutility.hoa.owedebtmanager.data.Person;
+
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
+
 import android.app.Activity;
 import android.net.Uri;
 import android.provider.ContactsContract.Contacts;
@@ -14,14 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.QuickContactBadge;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class PersonAdapter extends BaseAdapter {
 	private List<Person> people;
 	private Activity activity;
-	
+	private SimpleDateFormat longAgoFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.US);
 	public PersonAdapter (List<Person> people, Activity activity){
 		this.people = people;
 		this.activity = activity;
@@ -69,22 +74,44 @@ public class PersonAdapter extends BaseAdapter {
 		if (person.getContactKey() != null && person.getContactKey().length() > 0){
 			Uri contactUri = Contacts.getLookupUri(person.getContactId(), person.getContactKey());
 			holder.personImage.assignContactUri(contactUri);
-			if (person.getProfileUri() != null){
+			
 				Picasso.with(activity).load(person.getProfileUri())
 						.fit()
 						.placeholder(R.drawable.user_placeholder)
 						.error(R.drawable.user_placeholder)
 						.into(holder.personImage);
-			}
+			
 		}
 		
 		if (person.getBalance() != null && person.getBalance().compareTo(BigDecimal.ZERO) > 0){
-			holder.personBalance.setText("owe her " + person.getBalance().doubleValue());
+			holder.personBalance.setText(activity.getString(R.string.i_owe) + " " + person.getBalance().doubleValue());
 		}
 		else if (person.getBalance() != null) {
-			holder.personBalance.setText("she owe " + person.getBalance().abs().doubleValue());
+			holder.personBalance.setText(activity.getString(R.string.owe_me) + " " + person.getBalance().abs().doubleValue());
 		}
 		
+		
+		
+		// set last day
+
+		LocalDate currentTime = new LocalDate();
+		LocalDate oweDate = new LocalDate(person.getLastDay());
+		if (person.getLastDay() == 0){
+			holder.personLastTime.setText(R.string.no_record);
+			return view;
+		}
+		
+		int dayDifference = Days.daysBetween(oweDate.toDateTimeAtStartOfDay(), currentTime.toDateTimeAtStartOfDay()).getDays();
+		if (dayDifference == 0)
+			holder.personLastTime.setText(activity.getString(R.string.today));
+		else{
+			if (dayDifference == 1)
+				holder.personLastTime.setText(activity.getString(R.string.yesterday));
+			else if (dayDifference <= 7) 
+				holder.personLastTime.setText(dayDifference + " " + activity.getString(R.string.day_ago));
+			else
+				holder.personLastTime.setText(longAgoFormat.format(person.getLastDay()));
+		}
 		
 		return view;
 		

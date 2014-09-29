@@ -32,6 +32,9 @@ public class Person {
 	@DatabaseField
 	private BigDecimal balance;
 	
+	@DatabaseField
+	private long lastDay;
+	
 	public Person(){
 		super();
 	}
@@ -42,6 +45,7 @@ public class Person {
 		this.name = name;
 		this.contactId = contactId;
 		this.contactKey = contactKey;
+		this.profileUri = profileUri;
 	}
 
 	public int getpId() {
@@ -102,6 +106,27 @@ public class Person {
 
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+	
+	public void increaseBalance (BigDecimal change){
+		if (balance == null)
+			balance = new BigDecimal(0);
+		this.balance = this.balance.add(change);
+	}
+	public void decreaseBalance (BigDecimal change){
+		if (balance == null)
+			balance = new BigDecimal(0);
+		this.balance = this.balance.subtract(balance);
+	}
+
+
+	public long getLastDay() {
+		return lastDay;
+	}
+
+
+	public void setLastDay(long lastDay) {
+		this.lastDay = lastDay;
 	}
 	
 	

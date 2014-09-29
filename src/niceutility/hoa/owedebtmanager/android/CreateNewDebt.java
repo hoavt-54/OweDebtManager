@@ -30,13 +30,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -54,7 +54,6 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 
 	public static final String TIME_LONG_KEY = "time_key";
 	public static final int  REQUEST_ADD_CONTACT = 1;
-	private EditText debtNameEdt;
 	private EditText debtAmountEdt;
 	private EditText contactNameEdt;
 	private Button addContactButton;
@@ -70,8 +69,11 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 	private TextView itemTitleTxtView;
 	private TextView amountTitleTextview;
 	private LinearLayout interestAreaLayout;
+	private EditText commentContentEdit;
 	
 	
+	private boolean isEdit;
+	private int oldId;
 	private Debt newDebt;
 	private long contactId;
 //	private String debtName;
@@ -85,7 +87,8 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 	private boolean isMoney;
 	private String profileImageUri;
 	private boolean askSetDate;
-	private boolean resetDate;
+	private String itemName;
+	private DebtType debtType;
 	
 	public static DatabaseHelper databaseHelper;
 	private Dao<Debt, Integer> debtDao;
@@ -122,11 +125,28 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 		itemTitleTxtView = (TextView) findViewById(R.id.item_title_txtView);
 		amountTitleTextview = (TextView) findViewById(R.id.amount_title_txtView);
 		interestAreaLayout = (LinearLayout) findViewById(R.id.interest_area_layout);
-		
-		// init boolean variable 
-		isMoney = true;
+		commentContentEdit = (EditText) findViewById(R.id.comment_content_edt);
 		
 		
+		//handle intent from view activity
+		Intent intent = getIntent();
+		if (intent != null && (oldId = intent.getIntExtra(ViewDebtActivity.DEBT_ID_KEY, 0)) != 0){
+			actionBar.setTitle(getString(R.string.edit_debt));
+			isEdit = true;
+			askSetDate = true;
+			GetDebtDetails getDetailsTask = new GetDebtDetails();
+			getDetailsTask.execute(oldId);
+		}
+		else{
+			// init boolean variable 
+			isMoney = true;
+			oweDate = new Date();
+			oweDateTextview.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(oweDate));
+			expiredDate = new Date();
+			expiredDateTextView.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(expiredDate));
+			interestType = InterestType.no_interest;
+			debtType = intent.getBooleanExtra(MainActivity.MyDebtFragment.FRAGMENT_TYPE_KEY, false) ? DebtType.my_debt : DebtType.owe_me;
+		}
 		//config contact spinner
 		
 		addContactButton.setOnClickListener(new OnClickListener() {
@@ -150,8 +170,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 		});
 		
 		//initiate owe date by current day
-		oweDate = new Date();
-		oweDateTextview.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(oweDate));
+		
 		oweDateTextview.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -185,8 +204,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 		});
 		
 		//initiate owe date by current day
-		expiredDate = new Date();
-		expiredDateTextView.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(expiredDate));
+		
 		expiredDateTextView.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -220,14 +238,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 		});
 		
 		
-		//set up interest type spinner 
-		ArrayAdapter<CharSequence> interestTypeAdapter = ArrayAdapter.createFromResource(this, 
-										R.array.interest_type_array, android.R.layout.simple_spinner_item);
-		interestTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		interestTypeSinr.setAdapter(interestTypeAdapter);
-//		interestTypeSinr.setOnItemSelectedListener(this);
-		//default value for interest type
-		interestType = InterestType.no_interest;
+		
 		
 		interestEdt.addTextChangedListener(new TextWatcher() {
 			
@@ -348,6 +359,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 						profileImageUri = profileUri;
 						contactPreviewImage.assignContactUri(contactUri);
 						super.onPostExecute(cursor);
+						cursor.close();
 					}
 				};
 				
@@ -366,16 +378,30 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 			debtNameEdt.requestFocus();
 			return false;
 		}*/
-		
+		reminderComment = commentContentEdit.getText().toString();
 		// check amount
 		String debtAmountString = debtAmountEdt.getText().toString();
-		if (debtAmountString != null &&  debtAmountString.length() > 0)
+		if (isMoney && debtAmountString != null &&  debtAmountString.length() > 0 )
 			debtAmount = new BigDecimal(debtAmountEdt.getText().toString());
-		else {
+		else if (isMoney)  {
 			Toast.makeText(getBaseContext(), getString(R.string.debt_amount_empty_error), Toast.LENGTH_SHORT).show();
 			debtAmountEdt.requestFocus();
 			return false;
 		}
+		
+		// check item name
+		
+		itemName = itemNameEdt.getText().toString();
+		if(!isMoney && itemName != null && itemName.length() > 0){
+			// okay to save
+		}
+		else if (!isMoney) {
+			Toast.makeText(getBaseContext(), getString(R.string.item_name_empty_error), Toast.LENGTH_SHORT).show();
+			itemNameEdt.requestFocus();
+			return false;
+		}
+		
+		
 		//check contact
 		if (contactId != 0){
 //			Toast.makeText(getBaseContext(), contactName + "  " + contactKey,  Toast.LENGTH_SHORT).show();
@@ -407,7 +433,7 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 			       });
 			builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			           public void onClick(DialogInterface dialog, int id) {
-			        	   resetDate = true;
+			        	   
 			           }
 			       });
 			
@@ -452,6 +478,112 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 		
 		
 		return true; // if all input fields is validated
+	}
+	
+	
+	
+	public class GetDebtDetails extends AsyncTask<Integer, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Integer... arg0) {
+			try {
+				int debtId = arg0[0];
+				debtDao = databaseHelper.getDebtDao();
+				
+				personDao = databaseHelper.getPersonDao();
+				newDebt = debtDao.queryForId(debtId);
+				Person person = personDao.queryForId(newDebt.getPerson().getpId());
+				
+				if (newDebt.isMoney() && newDebt.getType() == DebtType.my_debt){
+					person.decreaseBalance(newDebt.getDebtAmount());
+				}
+				else if (newDebt.isMoney()){
+					Log.v("CREATENEWDEBT", "added: " + newDebt.getDebtAmount().longValue());
+					person.increaseBalance(newDebt.getDebtAmount());
+				}
+				
+				personDao.update(person);
+				newDebt.setPerson(person);
+				Log.v("VIEWDEBTACITVIIID", newDebt.getPerson().getProfileUri() + "");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean result) {
+			
+			isMoney = newDebt.isMoney();
+			oweDate = new Date(newDebt.getOweDate());
+			oweDateTextview.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(oweDate));
+			expiredDate = new Date(newDebt.getExpiredDate());
+			expiredDateTextView.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.US).format(expiredDate));
+			Person person = newDebt.getPerson();
+			contactName = person.getName();
+			contactNameEdt.setText(contactName);
+			contactId = person.getContactId();
+			contactKey = person.getContactKey();
+			interest = newDebt.getInterest();
+			interestEdt.setText(newDebt.getInterest() + "");
+			reminderComment = newDebt.getComments();
+			commentContentEdit.setText(reminderComment);
+			
+			if (contactId != 0)
+				contactPreviewLayout.setVisibility(View.VISIBLE);
+			final Uri contactUri = Contacts.getLookupUri(contactId, contactKey);
+			contactPreviewImage.assignContactUri(contactUri);
+			profileImageUri = person.getProfileUri();
+			Log.v("Create new Debt", profileImageUri + "");
+			Picasso.with(getBaseContext()).load(profileImageUri)
+				.placeholder(R.drawable.user_placeholder)
+				.error(R.drawable.user_placeholder)
+				.fit().into(contactPreviewImage);
+			
+			if (isMoney){
+				
+				RadioButton rb1 = (RadioButton) findViewById(R.id.radio_money_debt);
+				rb1.setChecked(true);
+				onRadioButtonClicked(rb1);
+				debtAmountEdt.setText(newDebt.getDebtAmount().longValue() + "");
+				debtAmount = newDebt.getDebtAmount();
+				interestType = newDebt.getInterestType();
+				debtType = newDebt.getType();
+				//amountAreaLayout.setVisibility(View.VISIBLE);
+				
+				switch (newDebt.getInterestType()) {
+				case daily:
+					RadioButton rb2 = (RadioButton) findViewById(R.id.radio_daily);
+					rb2.setChecked(true);
+					interest = newDebt.getInterest();
+					interestEdt.setText(newDebt.getInterest() + "");
+					break;
+				case monthly:
+					RadioButton rb3 = (RadioButton) findViewById(R.id.radio_monthly);
+					rb3.setChecked(true);
+					interest = newDebt.getInterest();
+					interestEdt.setText(newDebt.getInterest() + "");
+					break;
+				case no_interest:
+					RadioButton rb4 = (RadioButton) findViewById(R.id.radio_no_interest);
+					rb4.setChecked(true);
+				default:
+					break;
+				}
+			}else{
+				RadioButton rb1 = (RadioButton) findViewById(R.id.radio_item);
+				rb1.setChecked(true);
+				onRadioButtonClicked(rb1);
+				itemName = newDebt.getItemName();
+				itemNameEdt.setText(newDebt.getItemName());
+				interestType = InterestType.no_interest;
+				
+				
+			}
+			
+			
+			super.onPostExecute(result);
+		}
 	}
 	
 	public abstract class DatePickerFragment extends DialogFragment implements
@@ -509,9 +641,13 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 	
 	public boolean createDebtInLocalDatabase (){
 		
-		newDebt = new Debt(true, isMoney, DebtType.my_debt, debtAmount, 
+		if (isMoney)
+			newDebt = new Debt(isMoney, debtType, debtAmount, 
 					reminderComment, interest, interestType, oweDate.getTime(), expiredDate.getTime());
-		newDebt.setType(DebtType.my_debt);
+		else
+			newDebt = new Debt(debtType, "", itemName, reminderComment, oweDate.getTime(), expiredDate.getTime(), isMoney, null);
+		Log.v("Create new Debt", "isMoney: " + isMoney);
+		newDebt.setType(debtType);
 		AsyncTask< Void, Void, Void> saveTask =  new AsyncTask<Void, Void, Void>() {
 			
 			private ProgressDialog dialog = new ProgressDialog(CreateNewDebt.this);
@@ -549,13 +685,22 @@ public class CreateNewDebt extends ActionBarActivity implements OnItemSelectedLi
 						}
 						else { //create new person
 							person = new Person(contactName, contactKey, contactId, profileImageUri);
+							Log.v("CreateNewDebt", profileImageUri + "");
 							personDao.create(person);
 							
 						}
 					}
 					// finally we will have a valid person anyway
+					if (isMoney && DebtType.my_debt == newDebt.getType())
+						person.increaseBalance(debtAmount);
+					else if (isMoney && DebtType.owe_me == newDebt.getType())
+						person.decreaseBalance(debtAmount);
+					person.setLastDay(new Date().getTime());
+					personDao.update(person);
+					if (isEdit)
+						newDebt.setDebtId(oldId);
 					newDebt.setPerson(person);
-					debtDao.create(newDebt);
+					debtDao.createOrUpdate(newDebt);
 					
 				} catch (Exception e) {
 					e.printStackTrace();

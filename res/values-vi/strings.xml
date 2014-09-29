@@ -1,60 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Owe Debt Manager</string>
+    <string name="app_name">Quản lí nợ</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Cài đặt</string>
     <string name="title_activity_main">MainActivity</string>
 
     <!-- String in main activity -->
-    <string name="tab_my_debt_title">My debt</string>
-    <string name="tab_their_debt_title">Owe me</string>
-    <string name="tab_people_title">People</string>
-    <string name="action_create_new_debt">New debt</string>
+    <string name="tab_my_debt_title">Tôi nợ</string>
+    <string name="tab_their_debt_title">Nợ tôi</string>
+    <string name="tab_people_title">Cá nhân</string>
+    <string name="action_create_new_debt">Thêm</string>
 
     <!-- String in my debt fragment -->
-    <string name="my_debt_content"> This list shows my debt</string>
+    <string name="my_debt_content"> Đây là danh sách chứa các khoản bạn nợ</string>
 
     <!-- String in their debt to me fragment -->
-    <string name="their_debt_content">This list shows how people in debt to me</string>
+    <string name="their_debt_content">Đây là danh sách các khoản người khác nợ bạn</string>
 
     <!-- String in people Frament -->
-    <string name="people_fragment_content">This screen shows some statistic about people owe you and you owe </string>
-    <string name="title_activity_create_new_debt">CreateNewDebt</string>
+    <string name="people_fragment_content">Danh sách các cá nhân liên quan </string>
+    <string name="title_activity_create_new_debt">Tạo thêm</string>
     
     
     <!-- strings in create new debt activity -->
-	<string name="debt_field_name_titile">Debt name</string>
-	<string name="amount_field_name_title">Amount owed</string>
-	<string name="item_name_title">Item owed</string>
-	<string name="contact_field_name_title">Debtor</string>
-	<string name="select_contact_hint">Select a contact</string>
-	<string name="owe_date_field_name_title">Owe date</string>
-	<string name="expired_date_field_name_title">Expired date</string>
-	<string name="select_date_hint">select a date</string>
-	<string name="interest_type_field_name_title">Interest type</string>
-	<string name="select_interest_type_hint">select type of interest</string>
-	<string name="interest_field_name_title">Interest</string>
-	<string name="reminder_field_titile">Reminder</string>
-	<string name="reminder_hint">What makes you remind of this debt?</string>
+	<string name="debt_field_name_titile">Tên khoản nợ</string>
+	<string name="amount_field_name_title">Số tiền</string>
+	<string name="item_name_title">Tên đồ vật</string>
+	<string name="contact_field_name_title">Người nợ</string>
+	<string name="select_contact_hint">Chọn trong danh bạ</string>
+	<string name="owe_date_field_name_title">Ngày nợ</string>
+	<string name="expired_date_field_name_title">Ngày phải trả</string>
+	<string name="select_date_hint">Chọn ngày</string>
+	<string name="interest_type_field_name_title">Loại lãi suất</string>
+	<string name="select_interest_type_hint">Chọn loại lãi suất </string>
+	<string name="interest_field_name_title">Lãi</string>
+	<string name="reminder_field_titile">Ghi nhớ</string>
+	<string name="reminder_hint">Sự kiện gì giúp bạn nhớ lại được khoản nợ này?</string>
 	<string name="or">Or</string>
 	
-	<string name="action_done">Done</string>
+	<string name="action_done">Xong</string>
 	
 	<string name="alphabet">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 	<string name="action_search">Search</string>
 	
 	
 	<string-array name="interest_type_array">
-	    <item >No interest</item>
-	    <item>Daily</item>
-        <item>Monthly</item>
+	    <item >Không lãi</item>
+	    <item>Theo ngày</item>
+        <item>Theo tháng</item>
         
     </string-array>
     
 	
 	<string-array name="long_click_options">
-	    <item>View details</item>
+	    <item>Xem chi tiết</item>
 	    <item>Delete</item>
 	</string-array>
     
@@ -101,13 +101,5 @@
 	<string name="owe_me">Owe me</string>
 	
 	<string name="action_edit">Edit</string>
-	
-	
-	<!-- string for settting -->
-	
-	<string name="password_mode_enable">Enable password protection</string>
-	<string name="push_notification">Push notification on expired date</string>
-	<string name="font_size">Font size</string>
-	<string name="setting">Settings</string>
 	
 </resources>
